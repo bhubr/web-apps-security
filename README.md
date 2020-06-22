@@ -1,5 +1,9 @@
 # Sécurité des applications web (Node.js / React)
 
+## Changelog
+
+* Première version : plan et section sur les injections SQL - vidéos en cours mais non terminées
+
 ## Introduction
 
 Ce document a pour objectif de donner une introduction aux problématiques de sécurité des applications web.
@@ -55,7 +59,7 @@ Tous ces points, à l'exception de l'avant-dernier, concernent les applications 
 
 ## Première partie : sécurité des applications
 
-### Injection SQL
+### 1.1. Injection SQL
 
 #### Qu'est-ce que c'est ?
 
@@ -69,12 +73,14 @@ Ce risque est resté en première place du "Top 10" depuis des années. Il est d
 
 Prenons comme exemple une application web bancaire, permettant à ses visiteurs de consulter leurs comptes. L'application serveur est écrite avec Node.js et Express, et communique avec une base de données MySQL. Elle est architecturée comme une API REST. Une requête sur `/users/:userId/accounts` permettra d'obtenir la liste des comptes d'un utilisateur identifié par `userId` (correspondant à l'`id` de l'utilisateur dans la table `user`).
 
-Cet exemple est détaillé dans des vidéos, qui reprennent la même chose que les sections qui suivent. Il est important de noter qu'il vise _uniquement_ à couvrir l'injection SQL. Ainsi, il souffre de défauts volontairement laissés en l'état, par souci de simplification :
+Cet exemple est détaillé dans des vidéos [work in progress], qui reprennent la même chose que les sections qui suivent. Il est important de noter qu'il vise _uniquement_ à couvrir l'injection SQL. Ainsi, il souffre de défauts volontairement laissés en l'état, par souci de simplification :
 
 * Paramètres d'accès à la base de données écrits "en dur" dans le code
 * Accès à des données sensibles d'un utilisateur en passant son `id` dans l'URL, ce qui serait évitable si on implémentait un système d'authentification
 
 Dans le code qui suit, `connection` correspond à une connection établie via [mysql.createConnection](https://www.npmjs.com/package/mysql2#first-query)). Elle est exportée depuis `db-connection.js`. On ne fait pas apparaître ici que le code utile pour l'exemple :
+
+[Code plus complet](https://gist.github.com/bhubr/41e2db8165e69a91851d093fc11d6d96) à utiliser comme base des vidéos...
 
 ```javascript
 const connection = require('./db-connection');
@@ -176,6 +182,8 @@ Le `?` sera :
 * remplacé par la valeur de `userId`,
 * dont tout caractère spécial éventuel (`'`, `"`) aura été [échappé](https://fr.wikipedia.org/wiki/Caract%C3%A8re_d%27%C3%A9chappement),
 * le tout étant entouré d'apostrophes.
+
+L'utilisation de requêtes préparées permet de se prémunir efficacement contre les injections SQL.
 
 #### Pour en savoir plus
 
